@@ -27,6 +27,7 @@ FUND_NAME_MAPPING = {
 }
 
 
+
 class Transaction:
     def __init__(self, fund_name, domicile, date_time, transaction_type, number, share_price, currency, purchase_price):
         self.fund_name = fund_name
@@ -38,9 +39,35 @@ class Transaction:
         self.currency = currency
         self.purchase_price = purchase_price
 
-
     def __repr__(self):
-        return "Transaction fund name: %s, domicile: %s,  date: %s, type: %s, number: %s, share price: %s,currency: %s,  purchase price: %s" % (self.fund_name, self.domicile, self.date_time, self.transaction_type, self.number, self.share_price, self.currency, self.purchase_price)
+        return 'Transaction fund name: %s, domicile: %s,  date: %s, type: %s, number: %s, share price: %s,currency: %s,  purchase price: %s' % (self.fund_name, self.domicile, self.date_time, self.transaction_type, self.number, self.share_price, self.currency, self.purchase_price)
+
+
+class TransactionCollection:
+    def __init__(self):
+        self.transactions = []
+
+    def append(self, transaction: Transaction):
+        self.transactions.append(transaction)
+
+    def is_empty(self):
+        return not self.transactions
+
+    def get_fund_names(self):
+        fund_names = []
+        for transaction in self.transactions:
+            if not transaction.fund_name in fund_names:
+                fund_names.append(transaction.fund_name)
+        return fund_names
+
+    def get_fund_transactions(self, fund_name):
+        fund_transactions = []
+        for transaction in self.transactions:
+            if transaction.fund_name == fund_name:
+                fund_transactions.append(transaction)
+        return fund_transactions
+
+
 
 
 if __name__ == '__main__':
@@ -55,7 +82,7 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit(1)
 
-    transactions = []
+    transactions = TransactionCollection()
 
     if args.transactions_trading212:
         with open(args.transactions_trading212, newline='') as csvfile:
@@ -83,11 +110,12 @@ if __name__ == '__main__':
                 transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price, currency, purchase_price)
                 transactions.append(transaction)
                 print(transaction)
-            print(len(transactions))
+            print(transactions.is_empty())
 
 
     # Export the transaction in excell file
-    if len(transactions) > 0:
+
+    if not transactions.is_empty():
         wb = Workbook()
 
         # grab the active worksheet
@@ -104,10 +132,16 @@ if __name__ == '__main__':
         ws['H1'] = "Currency (Price / share)"
         ws["I1"] = "Purchase prise"
 
-        # Rows can also be appended
-        for transaction in transactions:
-            ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, " ", transaction.currency, transaction.purchase_price])
+        fund_names = transactions.get_fund_names()
+        for fund_name in fund_names:
+            fund_transactions = transactions.get_fund_transactions(fund_name)
 
+
+        # Rows can also be appended
+            for transaction in fund_transactions:
+                ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, " ", transaction.currency, transaction.purchase_price])
+
+            ws.append([])
 
         # Save the file
         wb.save("investments.xlsx")
