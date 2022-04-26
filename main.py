@@ -107,12 +107,9 @@ if __name__ == '__main__':
                 if not domicile:
                     print("Error could not find domicile " + ticker + " add it to FUND_DOMICILE_MAPPING!")
                     exit()
-
-                print(', '.join(row))
                 transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price, currency, purchase_price)
                 transactions.append(transaction)
-                print(transaction)
-            print(transactions.is_empty())
+
 
 
     # Export the transaction in excell file
