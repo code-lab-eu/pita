@@ -67,6 +67,8 @@ class TransactionCollection:
                 fund_transactions.append(transaction)
         return fund_transactions
 
+    def sort_by_date(self, reverse):
+        self.transactions.sort(key=lambda x: x.date_time, reverse=reverse)
 
 
 
@@ -132,6 +134,7 @@ if __name__ == '__main__':
         ws['H1'] = "Currency (Price / share)"
         ws["I1"] = "Purchase prise"
 
+        transactions.sort_by_date(True)
         fund_names = transactions.get_fund_names()
         for fund_name in fund_names:
             fund_transactions = transactions.get_fund_transactions(fund_name)
