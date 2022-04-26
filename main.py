@@ -93,9 +93,11 @@ if __name__ == '__main__':
             next(csvreader)
             for row in csvreader:
                 fund_name = row[4]
+
                 if not fund_name:
                     # If we don't have the fund this row is a bank transaction. Skip it!
                     continue
+
                 date_time = row[1]
                 transaction_type = row[0]
                 number = row[5]
@@ -130,6 +132,17 @@ if __name__ == '__main__':
         ws['G1'] = "Total shares"
         ws['H1'] = "Currency (Price / share)"
         ws["I1"] = "Purchase prise"
+
+        #Column width
+        ws.column_dimensions['A'].width = 40
+        ws.column_dimensions['B'].width = 10
+        ws.column_dimensions['C'].width = 25
+        ws.column_dimensions['D'].width = 20
+        ws.column_dimensions['E'].width = 20
+        ws.column_dimensions['F'].width = 15
+        ws.column_dimensions['G'].width = 10
+        ws.column_dimensions['H'].width = 10
+        ws.column_dimensions['I'].width = 10
 
         transactions.sort_by_date(True)
         fund_names = transactions.get_fund_names()
