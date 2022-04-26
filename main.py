@@ -92,10 +92,14 @@ if __name__ == '__main__':
             # We skip the first line, because it shows column headers
             next(csvreader)
             for row in csvreader:
-                fund_name = row[4]
 
+                # If we don't have the fund this row is a bank transaction. Skip it!
+                fund_name = row[4]
                 if not fund_name:
-                    # If we don't have the fund this row is a bank transaction. Skip it!
+                    continue
+
+                # The transaction list should only contain buys and sells. Skip dividends.
+                if row[0] == "Dividend (Ordinary)":
                     continue
 
                 date_time = row[1]
