@@ -121,7 +121,7 @@ if __name__ == '__main__':
         # grab the active worksheet
         ws = wb.active
 
-        # Data can be assigned directly to cells
+        # Create the header row.
         ws['A1'] = "Fund name"
         ws['B1'] = "Domicile"
         ws['C1'] = "Transaction date"
@@ -153,7 +153,7 @@ if __name__ == '__main__':
         for fund_name in fund_names:
             fund_transactions = transactions.get_fund_transactions(fund_name)
 
-            # Rows can also be appended
+            # Add each transaction as a new row in the excel sheet.
             for transaction in fund_transactions:
                 ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, " ", transaction.currency, transaction.purchase_price])
 
