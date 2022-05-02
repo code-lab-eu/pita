@@ -4,17 +4,13 @@ import sys
 
 from openpyxl import Workbook
 
-
-
-
 FUND_DOMICILE_MAPPING = {
     "IWQU": "Ireland",
     "IUSN": "Ireland",
     "IQQW": "Ireland",
-    "VAGF": "ireland",
+    "VAGF": "Ireland",
     "IS3S": "Ireland",
     "IQQH": "Ireland",
-
 }
 
 FUND_NAME_MAPPING = {
@@ -25,7 +21,6 @@ FUND_NAME_MAPPING = {
     "IS3S": "iShares Edge MSCI World Value Factor",
     "IQQH": "iShares Global Clean Energy",
 }
-
 
 
 class Transaction:
@@ -71,11 +66,10 @@ class TransactionCollection:
         self.transactions.sort(key=lambda x: x.date_time, reverse=reverse)
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--binck-transactions', dest='transactions_binck', help='The path to an excel file detailing BinckBank transactions.')
-    parser.add_argument('--trading212-transactions', dest='transactions_trading212',help='The path to an csv file detailing Trading 212 transactions.')
+    parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions.')
     args = parser.parse_args()
 
     # If the user doesn't supply the input print the help and exit
@@ -116,8 +110,6 @@ if __name__ == '__main__':
                 transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price, currency, purchase_price)
                 transactions.append(transaction)
 
-
-
     # Export the transaction in excell file
 
     if not transactions.is_empty():
@@ -137,7 +129,7 @@ if __name__ == '__main__':
         ws['H1'] = "Currency (Price / share)"
         ws["I1"] = "Purchase prise"
 
-        #Column width
+        # Column width
         ws.column_dimensions['A'].width = 40
         ws.column_dimensions['B'].width = 10
         ws.column_dimensions['C'].width = 25
@@ -153,8 +145,7 @@ if __name__ == '__main__':
         for fund_name in fund_names:
             fund_transactions = transactions.get_fund_transactions(fund_name)
 
-
-        # Rows can also be appended
+            # Rows can also be appended
             for transaction in fund_transactions:
                 ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, " ", transaction.currency, transaction.purchase_price])
 
