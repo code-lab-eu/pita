@@ -157,6 +157,15 @@ if __name__ == '__main__':
             for transaction in fund_transactions:
                 ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, " ", transaction.currency, transaction.purchase_price])
 
+                # Format the currencies.
+                # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
+                number_format = '#,##0.00 [$' + transaction.currency + '];[RED]-#,##0.00 [$' + transaction.currency + ']'
+                # Format the share price as a currency.
+                ws.cell(ws.max_row, 6).number_format = number_format
+                # Format the purchase price as a currency.
+                ws.cell(ws.max_row, 9).number_format = number_format
+
+            # Insert an empty row inbetween each fund.
             ws.append([])
 
         # Save the file
