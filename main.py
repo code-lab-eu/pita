@@ -1,7 +1,9 @@
 import argparse
 import csv
+import decimal
 import sys
 
+from datetime import datetime
 from openpyxl import Workbook
 
 FUND_DOMICILE_MAPPING = {
@@ -96,12 +98,12 @@ if __name__ == '__main__':
                 if row[0] == "Dividend (Ordinary)":
                     continue
 
-                date_time = row[1]
+                date_time = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S')
                 transaction_type = row[0]
-                number = row[5]
-                share_price = row[6]
+                number = decimal.Decimal(row[5])
+                share_price = decimal.Decimal(row[6])
                 currency = row[7]
-                purchase_price = row[9]
+                purchase_price = decimal.Decimal(row[9])
                 ticker = row[3]
                 domicile = FUND_DOMICILE_MAPPING.get(ticker)
                 if not domicile:
