@@ -5,6 +5,7 @@ import sys
 
 from datetime import datetime
 from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
 
 FUND_DOMICILE_MAPPING = {
     "IWQU": "Ireland",
@@ -130,6 +131,11 @@ if __name__ == '__main__':
         ws['G1'] = "Total shares"
         ws['H1'] = "Currency (Price / share)"
         ws["I1"] = "Purchase prise"
+
+        # Set a blue background color and white font color on row 1 (the header row).
+        for cell in ws[1]:
+            cell.fill = PatternFill(start_color="0066CC", fill_type="solid")
+            cell.font = Font(name="Calibri", color="FFFFFF")
 
         # Column width
         ws.column_dimensions['A'].width = 40
