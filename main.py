@@ -130,7 +130,7 @@ if __name__ == '__main__':
         ws['F1'] = "Share price"
         ws['G1'] = "Total shares"
         ws['H1'] = "Currency (Price / share)"
-        ws["I1"] = "Purchase prise"
+        ws['I1'] = "Purchase price"
 
         # Set a blue background color and white font color on row 1 (the header row).
         for cell in ws[1]:
@@ -140,9 +140,9 @@ if __name__ == '__main__':
         # Column width
         ws.column_dimensions['A'].width = 40
         ws.column_dimensions['B'].width = 10
-        ws.column_dimensions['C'].width = 25
+        ws.column_dimensions['C'].width = 20
         ws.column_dimensions['D'].width = 20
-        ws.column_dimensions['E'].width = 20
+        ws.column_dimensions['E'].width = 15
         ws.column_dimensions['F'].width = 15
         ws.column_dimensions['G'].width = 10
         ws.column_dimensions['H'].width = 10
@@ -161,4 +161,4 @@ if __name__ == '__main__':
 
         # Save the file
         wb.save("investments.xlsx")
-        print("Save file investments.xlsx!")
+        print("Saved file investments.xlsx!")
