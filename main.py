@@ -68,6 +68,15 @@ class TransactionCollection:
     def sort_by_date(self, reverse):
         self.transactions.sort(key=lambda x: x.date_time, reverse=reverse)
 
+    def calc_total_shares(self):
+        for fund_name in self.get_fund_names():
+            transactions = self.get_fund_transactions(fund_name)
+            transactions.sort(key=lambda x: x.date_time, reverse=False)
+            total_shares = 0
+            for transaction in transactions:
+                total_shares += transaction.number
+                transaction.total = total_shares
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -148,6 +157,7 @@ if __name__ == '__main__':
         ws.column_dimensions['H'].width = 10
         ws.column_dimensions['I'].width = 10
 
+        transactions.calc_total_shares()
         transactions.sort_by_date(True)
         fund_names = transactions.get_fund_names()
         for fund_name in fund_names:
@@ -155,7 +165,7 @@ if __name__ == '__main__':
 
             # Add each transaction as a new row in the excel sheet.
             for transaction in fund_transactions:
-                ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, " ", transaction.currency, transaction.purchase_price])
+                ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, transaction.total, transaction.currency, transaction.purchase_price])
 
                 # Format the currencies.
                 # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
