@@ -168,13 +168,21 @@ if __name__ == '__main__':
                 # Format the date as DD.MM.YYYY.
                 ws.cell(ws.max_row, 3).number_format = "DD.MM.YYYY"
 
+                # Format negative number in number column.
+                number_format = '#,0.000;[RED]-#,0.000'
+                # Format and styling the negative number in number column.
+                ws.cell(ws.max_row, 5).number_format = number_format
+                # Format and styling total share column.
+                ws.cell(ws.max_row, 7).number_format = number_format
+
                 # Format the currencies.
                 # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
                 number_format = '#,##0.00 [$' + transaction.currency + '];[RED]-#,##0.00 [$' + transaction.currency + ']'
                 # Format the share price as a currency.
                 ws.cell(ws.max_row, 6).number_format = number_format
                 # Format the purchase price as a currency.
-                ws.cell(ws.max_row, 9).number_format = number_format
+                ws.cell(ws.max_row, 8).number_format = number_format
+
 
             # Insert an empty row inbetween each fund.
             ws.append([])
