@@ -179,7 +179,8 @@ if __name__ == '__main__':
                 # Format the share price as a currency.
                 ws.cell(ws.max_row, 6).number_format = number_format
                 # Format the purchase price as a currency.
-                ws.cell(ws.max_row, 9).number_format = number_format
+                ws.cell(ws.max_row, 8).number_format = number_format
+
 
             # Insert an empty row inbetween each fund.
             ws.append([])
