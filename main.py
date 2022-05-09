@@ -168,6 +168,11 @@ if __name__ == '__main__':
                 # Format the date as DD.MM.YYYY.
                 ws.cell(ws.max_row, 3).number_format = "DD.MM.YYYY"
 
+                #Format negative number in number column.
+                number_format = '#,0.000;[RED]-#,0.000'
+                #Format and sryling the negative number in number column
+                ws.cell(ws.max_row, 5).number_format = number_format
+
                 # Format the currencies.
                 # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
                 number_format = '#,##0.00 [$' + transaction.currency + '];[RED]-#,##0.00 [$' + transaction.currency + ']'
