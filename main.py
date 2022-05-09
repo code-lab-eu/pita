@@ -152,8 +152,8 @@ if __name__ == '__main__':
         ws.column_dimensions['D'].width = 20
         ws.column_dimensions['E'].width = 15
         ws.column_dimensions['F'].width = 15
-        ws.column_dimensions['G'].width = 10
-        ws.column_dimensions['H'].width = 10
+        ws.column_dimensions['G'].width = 15
+        ws.column_dimensions['H'].width = 15
 
         transactions.calc_total_shares()
         transactions.sort_by_date(True)
