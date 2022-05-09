@@ -164,6 +164,10 @@ if __name__ == '__main__':
             # Add each transaction as a new row in the excel sheet.
             for transaction in fund_transactions:
                 ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, transaction.total, transaction.purchase_price])
+
+                # Format the date as DD.MM.YYYY.
+                ws.cell(ws.max_row, 3).number_format = "DD.MM.YYYY"
+
                 # Format the currencies.
                 # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
                 number_format = '#,##0.00 [$' + transaction.currency + '];[RED]-#,##0.00 [$' + transaction.currency + ']'
