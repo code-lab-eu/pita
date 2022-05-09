@@ -172,7 +172,7 @@ if __name__ == '__main__':
                 number_format = '#,0.000;[RED]-#,0.000'
                 #Format and sryling the negative number in number column
                 ws.cell(ws.max_row, 5).number_format = number_format
-                # Format and sryling total share column
+                # Format and styling total share column.
                 ws.cell(ws.max_row, 7).number_format = number_format
 
                 # Format the currencies.
