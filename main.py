@@ -38,7 +38,7 @@ class Transaction:
         self.purchase_price = purchase_price
 
     def __repr__(self):
-        return 'Transaction fund name: %s, domicile: %s,  date: %s, type: %s, number: %s, share price: %s,currency: %s,  purchase price: %s' % (self.fund_name, self.domicile, self.date_time, self.transaction_type, self.number, self.share_price, self.currency, self.purchase_price)
+        return 'Transaction fund name: %s, domicile: %s,  date: %s, type: %s, number: %s, share price: %s, currency: %s, purchase price: %s' % (self.fund_name, self.domicile, self.date_time, self.transaction_type, self.number, self.share_price, self.currency, self.purchase_price)
 
 
 class TransactionCollection:
@@ -138,8 +138,7 @@ if __name__ == '__main__':
         ws['E1'] = "Number"
         ws['F1'] = "Share price"
         ws['G1'] = "Total shares"
-        ws['H1'] = "Currency (Price / share)"
-        ws['I1'] = "Purchase price"
+        ws['H1'] = "Purchase price"
 
         # Set a blue background color and white font color on row 1 (the header row).
         for cell in ws[1]:
@@ -153,9 +152,8 @@ if __name__ == '__main__':
         ws.column_dimensions['D'].width = 20
         ws.column_dimensions['E'].width = 15
         ws.column_dimensions['F'].width = 15
-        ws.column_dimensions['G'].width = 10
-        ws.column_dimensions['H'].width = 10
-        ws.column_dimensions['I'].width = 10
+        ws.column_dimensions['G'].width = 15
+        ws.column_dimensions['H'].width = 15
 
         transactions.calc_total_shares()
         transactions.sort_by_date(True)
@@ -165,7 +163,7 @@ if __name__ == '__main__':
 
             # Add each transaction as a new row in the excel sheet.
             for transaction in fund_transactions:
-                ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, transaction.total, transaction.currency, transaction.purchase_price])
+                ws.append([transaction.fund_name, transaction.domicile, transaction.date_time, transaction.transaction_type, transaction.number, transaction.share_price, transaction.total, transaction.purchase_price])
 
                 # Format the date as DD.MM.YYYY.
                 ws.cell(ws.max_row, 3).number_format = "DD.MM.YYYY"
