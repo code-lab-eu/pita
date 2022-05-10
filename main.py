@@ -1,32 +1,12 @@
 import argparse
-import csv
-import decimal
 import sys
 
-from transaction import Transaction
+from importers.trading212.transactions_importer import Trading212TransactionsImporter
 from transaction_collection import TransactionCollection
 
-from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
-FUND_DOMICILE_MAPPING = {
-    "IWQU": "Ireland",
-    "IUSN": "Ireland",
-    "IQQW": "Ireland",
-    "VAGF": "Ireland",
-    "IS3S": "Ireland",
-    "IQQH": "Ireland",
-}
-
-FUND_NAME_MAPPING = {
-    "IWQU": "iShares Edge MSCI World Quality Factor",
-    "IUSN": "iShares MSCI World Small Cap",
-    "IQQW": "iShares MSCI World EUR",
-    "VAGF": "Vanguard Global Aggregate Bond",
-    "IS3S": "iShares Edge MSCI World Value Factor",
-    "IQQH": "iShares Global Clean Energy",
-}
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -43,34 +23,7 @@ if __name__ == '__main__':
     transactions = TransactionCollection()
 
     if args.transactions_trading212:
-        with open(args.transactions_trading212, newline='') as csvfile:
-            csvreader = csv.reader(csvfile)
-            # We skip the first line, because it shows column headers
-            next(csvreader)
-            for row in csvreader:
-
-                # If we don't have the fund this row is a bank transaction. Skip it!
-                fund_name = row[4]
-                if not fund_name:
-                    continue
-
-                # The transaction list should only contain buys and sells. Skip dividends.
-                if row[0] == "Dividend (Ordinary)":
-                    continue
-
-                date_time = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S')
-                transaction_type = row[0]
-                number = decimal.Decimal(row[5])
-                share_price = decimal.Decimal(row[6])
-                currency = row[7]
-                purchase_price = decimal.Decimal(row[9])
-                ticker = row[3]
-                domicile = FUND_DOMICILE_MAPPING.get(ticker)
-                if not domicile:
-                    print("Error could not find domicile " + ticker + " add it to FUND_DOMICILE_MAPPING!")
-                    exit()
-                transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price, currency, purchase_price)
-                transactions.append(transaction)
+        Trading212TransactionsImporter.import_transactions(transactions, args.transactions_trading212)
 
     # Export the transaction in excell file
 
