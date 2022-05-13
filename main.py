@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from importers.trading212.transactions_importer import Trading212TransactionsImporter
+from importers.binck.transactions_importer import BinckTransactionsImporter
 from transaction_collection import TransactionCollection
 
 from openpyxl import Workbook
@@ -24,6 +25,9 @@ if __name__ == '__main__':
 
     if args.transactions_trading212:
         Trading212TransactionsImporter.import_transactions(transactions, args.transactions_trading212)
+
+    if args.transactions_binck:
+        BinckTransactionsImporter.import_transactions(transactions, args.transactions_binck)
 
     # Export the transaction in excell file
 
