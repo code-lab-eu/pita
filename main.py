@@ -34,12 +34,11 @@ if __name__ == '__main__':
     if args.transactions_saxo:
         SaxoImporter.import_transactions(transactions, args.transactions_saxo)
 
-    # Export the transaction in excell file
-
+    # Export the transactions to an Excel file.
     if not transactions.is_empty():
         wb = Workbook()
 
-        # grab the active worksheet
+        # Grab the active worksheet.
         ws = wb.active
 
         # Create the header row.
@@ -57,7 +56,7 @@ if __name__ == '__main__':
             cell.fill = PatternFill(start_color="0066CC", fill_type="solid")
             cell.font = Font(name="Calibri", color="FFFFFF")
 
-        # Column width
+        # Column widths.
         ws.column_dimensions['A'].width = 40
         ws.column_dimensions['B'].width = 10
         ws.column_dimensions['C'].width = 20
