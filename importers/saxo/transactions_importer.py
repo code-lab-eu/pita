@@ -3,18 +3,18 @@ from openpyxl import load_workbook
 import decimal
 
 FUND_DOMICILE_MAPPING = {
-    "iShares USD High Yield Capped Bond UCITS ETF (ISIN: IE00B4PY7Y77)": "Ireland",
+    "Amundi Index FTSE EPRA Nareit Global- ETF (ISIN: LU1437018838)": "Luxembourg",
+    "iShares Core Euro Corporate Bond UCITS ETF (ISIN: IE00B3F81R35)": "Ireland",
+    "iShares Core Global Aggregate Bond UCITS ETF (ISIN: IE00BDBRDM35)": "Ireland",
+    "iShares Core MSCI World UCITS ETF (ISIN: IE00B4L5Y983)": "Ireland",
+    "iShares EM Infrastructure UCITS ETF (ISIN: IE00B2NPL135)" : "Ireland",
+    "iShares Emerging Markets Local Gov Bond UCITS ETF (ISIN: IE00B5M4WH52)": "Ireland",
     "iShares FTSE/EPRA European Property EUR UCITS ETF (ISIN: IE00B0M63284)": "Ireland",
     "iShares High Yield Corp. Bond UCITS ETF (ISIN: IE00B66F4759)": "Ireland",
-    "Amundi Index FTSE EPRA Nareit Global- ETF (ISIN: LU1437018838)": "Luxembourg",
-    "iShares Core MSCI World UCITS ETF (ISIN: IE00B4L5Y983)": "Ireland",
-    "iShares MSCI World Small Cap UCITS ETF (ISIN: IE00BF4RFH31)": "Ireland",
-    "iShares EM Infrastructure UCITS ETF (ISIN: IE00B2NPL135)" : "Ireland",
-    "iShares Core Global Aggregate Bond UCITS ETF (ISIN: IE00BDBRDM35)": "Ireland",
-    "iShares Core Euro Corporate Bond UCITS ETF (ISIN: IE00B3F81R35)": "Ireland",
-    "iShares Emerging Markets Local Gov Bond UCITS ETF (ISIN: IE00B5M4WH52)": "Ireland",
     "iShares MSCI Turkey UCITS ETF (ISIN: IE00B1FZS574)": "Ireland",
+    "iShares MSCI World Small Cap UCITS ETF (ISIN: IE00BF4RFH31)": "Ireland",
     "iShares S&P Global Clean Energy ETF (ISIN: IE00B1XNHC34)": "Ireland",
+    "iShares USD High Yield Capped Bond UCITS ETF (ISIN: IE00B4PY7Y77)": "Ireland",
 }
 
 
