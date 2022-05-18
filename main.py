@@ -16,7 +16,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--binck-transactions', dest='transactions_binck', help='The path to an excel file detailing BinckBank transactions.')
     parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions.')
-    parser.add_argument('--trading212-dividends', dest='dividends_trading212',help='The path to an csv file detailing Trading 212 dividends.')
     parser.add_argument('--saxo-transactions', dest='transactions_saxo', help='The path to an excel file detailing Saxo transactions.')
     args = parser.parse_args()
 
@@ -31,13 +30,9 @@ if __name__ == '__main__':
 
     if args.transactions_trading212:
         Trading212TransactionsImporter.import_transactions(transactions, args.transactions_trading212)
-        #Trading212DividendsImporter.import_dividends(transactions, args.dividends_trading212)
 
     if args.transactions_binck:
         BinckTransactionsImporter.import_transactions(transactions, args.transactions_binck)
-
-    if args.dividends_trading212:
-       Trading212DividendsImporter.import_dividends(payments, args.dividends_trading212)
 
     if args.transactions_saxo:
         SaxoImporter.import_transactions(transactions, args.transactions_saxo)
