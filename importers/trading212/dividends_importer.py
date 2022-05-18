@@ -1,4 +1,4 @@
-from dividend_payment import DividendTransaction
+from dividend_payment import DividendPayment
 import csv
 import decimal
 
@@ -49,6 +49,6 @@ class Trading212DividendsImporter:
                 if not country:
                     print("Error could not find domicile " + ticker + " add it to FUND_DOMICILE_MAPPING!")
                     exit()
-                dividend_payment = DividendTransaction(security, company, dividend, country, tax_paid, currency, purchase_price)
+                dividend_payment = DividendPayment(security, company, dividend, country, tax_paid, currency, purchase_price)
                 collection.append(dividend_payment)
 

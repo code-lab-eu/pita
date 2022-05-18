@@ -1,11 +1,11 @@
-from dividend_payment import DividendTransaction
+from dividend_payment import DividendPayment
 
 
 class DividendCollection:
     def __init__(self):
         self.payments = []
 
-    def append(self, dividend_payment: DividendTransaction):
+    def append(self, dividend_payment: DividendPayment):
         self.payments.append(dividend_payment)
 
     def is_empty(self):
