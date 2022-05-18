@@ -49,7 +49,7 @@ class Trading212TransactionsImporter:
                 number = decimal.Decimal(row[5])
                 share_price = decimal.Decimal(row[6])
                 currency = row[7]
-                purchase_price = decimal.Decimal(row[9])
+                purchase_price = decimal.Decimal(row[10])
                 ticker = row[3]
                 domicile = FUND_DOMICILE_MAPPING.get(ticker)
                 if not domicile:
