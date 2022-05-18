@@ -42,7 +42,6 @@ class Trading212DividendsImporter:
                 dividend = decimal.Decimal(row[10])
                 currency = row[7]
                 purchase_price = decimal.Decimal(row[11])
-                print(purchase_price)
                 ticker = row[3]
                 country = FUND_DOMICILE_MAPPING.get(ticker)
                 tax_paid = row[11]
