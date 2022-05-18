@@ -11,15 +11,6 @@ FUND_DOMICILE_MAPPING = {
     "IQQH": "Ireland",
 }
 
-FUND_NAME_MAPPING = {
-    "IWQU": "iShares Edge MSCI World Quality Factor",
-    "IUSN": "iShares MSCI World Small Cap",
-    "IQQW": "iShares MSCI World EUR",
-    "VAGF": "Vanguard Global Aggregate Bond",
-    "IS3S": "iShares Edge MSCI World Value Factor",
-    "IQQH": "iShares Global Clean Energy",
-}
-
 
 class Trading212DividendsImporter:
     @staticmethod
