@@ -10,6 +10,8 @@ FUND_DOMICILE_MAPPING = {
     "VAGF": "Ireland",
     "IS3S": "Ireland",
     "IQQH": "Ireland",
+    "EUNL": "Ireland",
+    "EUNA": "Ireland"
 }
 
 FUND_NAME_MAPPING = {
@@ -19,6 +21,8 @@ FUND_NAME_MAPPING = {
     "VAGF": "Vanguard Global Aggregate Bond",
     "IS3S": "iShares Edge MSCI World Value Factor",
     "IQQH": "iShares Global Clean Energy",
+    "EUNL": "iShares Core MSCI World EUR",
+    "EUNA": "iShares Core Global Aggregate Bond EUR"
 }
 
 
