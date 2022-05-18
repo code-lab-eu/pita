@@ -11,7 +11,7 @@ class DividendCollection:
     def is_empty(self):
         return not self.payments
 
-    def get_security(self):#get_fund_names
+    def get_fund_names(self):
         fund_names = []
         for payment in self.payments:
             if not payment.fund_name in fund_names:

@@ -132,7 +132,7 @@ if __name__ == '__main__':
             ws.column_dimensions['D'].width = 20
             ws.column_dimensions['E'].width = 30
 
-            fund_names = payments.get_security()
+            fund_names = payments.get_fund_names()
             for fund_name in fund_names:
                 fund_payments = payments.get_fund_payments(fund_name)
 
