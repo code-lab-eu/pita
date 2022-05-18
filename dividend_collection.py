@@ -18,6 +18,7 @@ class DividendCollection:
                 fund_names.append(payment.fund_name)
         return fund_names
 
+    # Returns all dividend payments for the given fund.
     def get_fund_payments(self, fund_name):
         fund_payments = []
         for payment in self.payments:
