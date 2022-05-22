@@ -15,11 +15,11 @@ from openpyxl.styles import Font, PatternFill
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--binck-transactions', dest='transactions_binck', help='The path to an excel file detailing BinckBank transactions.')
-    parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions.')
+    parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions + dividends.')
     parser.add_argument('--saxo-transactions', dest='transactions_saxo', help='The path to an excel file detailing Saxo transactions.')
     args = parser.parse_args()
 
-    # If the user doesn't supply the input print the help and exit
+    # If the user doesn't supply input print the help and exit.
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
