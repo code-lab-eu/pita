@@ -20,7 +20,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # If the user doesn't supply the input print the help and exit
-
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)

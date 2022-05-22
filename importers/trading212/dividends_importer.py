@@ -41,4 +41,3 @@ class Trading212DividendsImporter:
                     exit()
                 dividend_payment = DividendPayment(security, company, dividend, country, tax_paid, currency, purchase_price)
                 collection.append(dividend_payment)
-
