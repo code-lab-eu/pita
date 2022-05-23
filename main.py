@@ -3,8 +3,10 @@ import sys
 
 from importers.trading212.transactions_importer import Trading212TransactionsImporter
 from importers.binck.transactions_importer import BinckTransactionsImporter
+from importers.trading212.dividends_importer import Trading212DividendsImporter
 from importers.saxo.transactions_importer import SaxoImporter
 from transaction_collection import TransactionCollection
+from dividend_collection import DividendCollection
 
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
@@ -13,20 +15,22 @@ from openpyxl.styles import Font, PatternFill
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--binck-transactions', dest='transactions_binck', help='The path to an excel file detailing BinckBank transactions.')
-    parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions.')
+    parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions + dividends.')
     parser.add_argument('--saxo-transactions', dest='transactions_saxo', help='The path to an excel file detailing Saxo transactions.')
     args = parser.parse_args()
 
-    # If the user doesn't supply the input print the help and exit
-
+    # If the user doesn't supply input print the help and exit.
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
 
     transactions = TransactionCollection()
+    payments = DividendCollection()
 
     if args.transactions_trading212:
         Trading212TransactionsImporter.import_transactions(transactions, args.transactions_trading212)
+        Trading212DividendsImporter.import_dividends(payments, args.transactions_trading212)
+
 
     if args.transactions_binck:
         BinckTransactionsImporter.import_transactions(transactions, args.transactions_binck)
@@ -94,10 +98,61 @@ if __name__ == '__main__':
                 # Format the purchase price as a currency.
                 ws.cell(ws.max_row, 8).number_format = number_format
 
-
             # Insert an empty row inbetween each fund.
             ws.append([])
 
         # Save the file
         wb.save("investments.xlsx")
         print("Saved file investments.xlsx!")
+
+
+        # Dividend payments
+        if not payments.is_empty():
+            wb = Workbook()
+
+            # grab the active worksheet
+            ws = wb.active
+
+            # Create the header row.
+            ws['A1'] = "Security"
+            ws['B1'] = "Company"
+            ws['C1'] = "Country"
+            ws['D1'] = "Dividend"
+            ws['E1'] = "Tax paid/withheld abroad"
+
+            # Set a blue background color and white font color on row 1 (the header row).
+            for cell in ws[1]:
+                cell.fill = PatternFill(start_color="0066CC", fill_type="solid")
+                cell.font = Font(name="Calibri", color="FFFFFF")
+
+            # Column width
+            ws.column_dimensions['A'].width = 40
+            ws.column_dimensions['B'].width = 10
+            ws.column_dimensions['C'].width = 20
+            ws.column_dimensions['D'].width = 20
+            ws.column_dimensions['E'].width = 30
+
+            fund_names = payments.get_fund_names()
+            for fund_name in fund_names:
+                fund_payments = payments.get_fund_payments(fund_name)
+
+                # Add each transaction as a new row in the excel sheet.
+                for payment in fund_payments:
+                    ws.append([payment.fund_name, payment.company, payment.country,
+                               payment.dividend, payment.purchase_price])
+
+                    # Format the currencies.
+                    # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
+                    number_format = '#,##0.00 [$' + payment.currency + '];[RED]-#,##0.00 [$' + payment.currency + ']'
+                    # Format the share price as a currency.
+                    ws.cell(ws.max_row, 4).number_format = number_format
+                    # Format the purchase price as a currency.
+                    ws.cell(ws.max_row, 5).number_format = number_format
+
+                # Insert an empty row inbetween each fund.
+                ws.append([])
+
+            # Save the file
+            wb.save("dividends.xlsx")
+            print("Saved file dividends.xlsx!")
+

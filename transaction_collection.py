@@ -1,5 +1,6 @@
 from transaction import Transaction
 
+
 class TransactionCollection:
     def __init__(self):
         self.transactions = []
