@@ -1,6 +1,8 @@
 from dividend_payment import DividendPayment
 import csv
 import decimal
+from dividend_collection import DividendCollection
+from typeguard import typechecked
 
 FUND_DOMICILE_MAPPING = {
     "IWQU": "Ireland",
@@ -14,7 +16,8 @@ FUND_DOMICILE_MAPPING = {
 
 class Trading212DividendsImporter:
     @staticmethod
-    def import_dividends(collection, file_name):
+    @typechecked
+    def import_dividends(collection: DividendCollection, file_name):
         with open(file_name, newline='') as csvfile:
             csvreader = csv.reader(csvfile)
             # We skip the first line, because it shows column headers
