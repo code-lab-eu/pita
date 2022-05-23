@@ -28,6 +28,11 @@ class Trading212TransactionsImporter:
         with open(file_name, newline='') as csvfile:
             csvreader = csv.reader(csvfile)
             # We skip the first line, because it shows column headers
+            first_line_file_list = ['Action','Time','ISIN','Ticker','Name','No. of shares', 'Price / share','Currency (Price / share)','Exchange rate','Result (EUR)','Total (EUR)','Withholding tax','Currency (Withholding tax)','Charge amount (EUR)','Notes',"ID\n"]
+            first_line = csvfile.readline().split(',')
+            if len(first_line_file_list) != len(first_line):
+                 raise Exception("Check the amount of the colums! Unexpected columns!")
+
             next(csvreader)
             for row in csvreader:
 
