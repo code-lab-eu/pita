@@ -11,8 +11,8 @@ FUND_DOMICILE_MAPPING = {
     "VAGF": "Ireland",
     "IS3S": "Ireland",
     "IQQH": "Ireland",
-}
 
+}
 
 class Trading212DividendsImporter:
     @staticmethod

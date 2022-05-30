@@ -4,6 +4,7 @@ import sys
 from importers.trading212.transactions_importer import Trading212TransactionsImporter
 from importers.binck.transactions_importer import BinckTransactionsImporter
 from importers.trading212.dividends_importer import Trading212DividendsImporter
+from importers.saxo.dividends_importer import SaxoDividendsImporter
 from importers.saxo.transactions_importer import SaxoImporter
 from transaction_collection import TransactionCollection
 from dividend_collection import DividendCollection
@@ -37,6 +38,7 @@ if __name__ == '__main__':
 
     if args.transactions_saxo:
         SaxoImporter.import_transactions(transactions, args.transactions_saxo)
+        SaxoDividendsImporter.import_dividends(payments, args.transactions_saxo)
 
     # Export the transactions to an Excel file.
     if not transactions.is_empty():
@@ -126,7 +128,7 @@ if __name__ == '__main__':
                 cell.font = Font(name="Calibri", color="FFFFFF")
 
             # Column width
-            ws.column_dimensions['A'].width = 40
+            ws.column_dimensions['A'].width = 50
             ws.column_dimensions['B'].width = 10
             ws.column_dimensions['C'].width = 20
             ws.column_dimensions['D'].width = 20
