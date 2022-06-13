@@ -7,6 +7,9 @@ from importers.binck.transactions_importer import BinckTransactionsImporter
 from importers.trading212.dividends_importer import Trading212DividendsImporter
 from importers.saxo.dividends_importer import SaxoDividendsImporter
 from importers.saxo.transactions_importer import SaxoImporter
+from importers.interactivebrokers.transactions_importer import (
+    InteractiveBrokersImporter,
+)
 from transaction_collection import TransactionCollection
 from dividend_collection import DividendCollection
 from appendix8row import Appendix8Row
@@ -47,6 +50,11 @@ if __name__ == "__main__":
         dest="saxo_closed_positions",
         help="The path to an excel file detailing Saxo closed positions.",
     )
+    parser.add_argument(
+        "--interactivebr-transactions",
+        dest="transactions_interactivebr",
+        help="The path to an excel file detailing Interactive Broker transactions.",
+    )
     args = parser.parse_args()
 
     # If the user doesn't supply input print the help and exit.
@@ -80,6 +88,11 @@ if __name__ == "__main__":
 
     if args.saxo_closed_positions:
         SaxoImporter.import_closed_positions(transactions, args.saxo_closed_positions)
+
+    if args.transactions_interactivebr:
+        InteractiveBrokersImporter.import_transactions(
+            transactions, args.transactions_interactivebr
+        )
 
     # Export the transactions to an Excel file.
     if not transactions.is_empty():
