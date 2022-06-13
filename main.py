@@ -5,6 +5,7 @@ from importers.trading212.transactions_importer import Trading212TransactionsImp
 from importers.binck.transactions_importer import BinckTransactionsImporter
 from importers.trading212.dividends_importer import Trading212DividendsImporter
 from importers.saxo.transactions_importer import SaxoImporter
+from importers.interactivebrokers.transactions_importer import InteractiveBrokersImporter
 from transaction_collection import TransactionCollection
 from dividend_collection import DividendCollection
 
@@ -17,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('--binck-transactions', dest='transactions_binck', help='The path to an excel file detailing BinckBank transactions.')
     parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions + dividends.')
     parser.add_argument('--saxo-transactions', dest='transactions_saxo', help='The path to an excel file detailing Saxo transactions.')
+    parser.add_argument('--interactivebr-transactions', dest='transactions_interactivebr',help='The path to an excel file detailing Interactive Broker transactions.')
     args = parser.parse_args()
 
     # If the user doesn't supply input print the help and exit.
@@ -31,12 +33,14 @@ if __name__ == '__main__':
         Trading212TransactionsImporter.import_transactions(transactions, args.transactions_trading212)
         Trading212DividendsImporter.import_dividends(payments, args.transactions_trading212)
 
-
     if args.transactions_binck:
         BinckTransactionsImporter.import_transactions(transactions, args.transactions_binck)
 
     if args.transactions_saxo:
         SaxoImporter.import_transactions(transactions, args.transactions_saxo)
+
+    if args.transactions_interactivebr:
+        InteractiveBrokersImporter.import_transactions(transactions, args.transactions_interactivebr)
 
     # Export the transactions to an Excel file.
     if not transactions.is_empty():
@@ -155,4 +159,3 @@ if __name__ == '__main__':
             # Save the file
             wb.save("dividends.xlsx")
             print("Saved file dividends.xlsx!")
-
