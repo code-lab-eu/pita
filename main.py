@@ -7,6 +7,9 @@ from importers.binck.transactions_importer import BinckTransactionsImporter
 from importers.trading212.dividends_importer import Trading212DividendsImporter
 from importers.saxo.dividends_importer import SaxoDividendsImporter
 from importers.saxo.transactions_importer import SaxoImporter
+from importers.interactivebrokers.dividends_importer import (
+    InteractiveBrokersDividendsImporter,
+)
 from importers.interactivebrokers.transactions_importer import (
     InteractiveBrokersImporter,
 )
@@ -55,6 +58,11 @@ if __name__ == "__main__":
         dest="transactions_interactivebr",
         help="The path to an excel file detailing Interactive Broker transactions.",
     )
+    parser.add_argument(
+        "--interactivebr-dividends",
+        dest="dividends_interactivebr",
+        help="The path to an excel file detailing Interactive Broker transactions.",
+    )
     args = parser.parse_args()
 
     # If the user doesn't supply input print the help and exit.
@@ -92,6 +100,11 @@ if __name__ == "__main__":
     if args.transactions_interactivebr:
         InteractiveBrokersImporter.import_transactions(
             transactions, args.transactions_interactivebr
+        )
+
+    if args.dividends_interactivebr:
+        InteractiveBrokersDividendsImporter.import_dividends(
+            payments, args.dividends_interactivebr
         )
 
     # Export the transactions to an Excel file.
