@@ -15,6 +15,7 @@ FUND_NAME_MAPPING = {
     "IPRP": "ISHARES EUROPE PRPRTY YIELD",
     "IUSN": "ISHARES MSCI WLD SMALL CAP",
     "IWDA": "ISHARES CORE MSCI WORLD",
+    "IQQP": "iShares European Property Yield UCITS ETF",
 }
 
 
