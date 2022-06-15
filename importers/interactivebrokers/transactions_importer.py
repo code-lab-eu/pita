@@ -25,7 +25,6 @@ class InteractiveBrokersImporter:
             csvreader = csv.reader(csvfile)
             # We skip the first line, because it shows column headers
             headers = next(csvreader)
-            print(headers)
             symbol_column = headers.index("Symbol")
             description_column = headers.index("Description")
             currency_primary_column = headers.index("CurrencyPrimary")
