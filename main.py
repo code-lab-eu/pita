@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import sys
 
 from importers.trading212.transactions_importer import Trading212TransactionsImporter
@@ -119,11 +120,12 @@ if __name__ == '__main__':
             ws = wb.active
 
             # Create the header row.
-            ws['A1'] = "Security"
-            ws['B1'] = "Company"
-            ws['C1'] = "Country"
-            ws['D1'] = "Dividend"
-            ws['E1'] = "Tax paid/withheld abroad"
+            ws["A1"] = "Dividend date"
+            ws["B1"] = "Security"
+            ws["C1"] = "Company"
+            ws["D1"] = "Country"
+            ws["E1"] = "Dividend"
+            ws["F1"] = "Tax paid/withheld abroad"
 
             # Set a blue background color and white font color on row 1 (the header row).
             for cell in ws[1]:
@@ -131,11 +133,12 @@ if __name__ == '__main__':
                 cell.font = Font(name="Calibri", color="FFFFFF")
 
             # Column width
-            ws.column_dimensions['A'].width = 50
-            ws.column_dimensions['B'].width = 10
-            ws.column_dimensions['C'].width = 20
-            ws.column_dimensions['D'].width = 20
-            ws.column_dimensions['E'].width = 30
+            ws.column_dimensions["A"].width = 20
+            ws.column_dimensions["B"].width = 50
+            ws.column_dimensions["C"].width = 10
+            ws.column_dimensions["D"].width = 20
+            ws.column_dimensions["E"].width = 20
+            ws.column_dimensions["F"].width = 30
 
             fund_names = payments.get_fund_names()
             for fund_name in fund_names:
@@ -143,16 +146,36 @@ if __name__ == '__main__':
 
                 # Add each transaction as a new row in the excel sheet.
                 for payment in fund_payments:
-                    ws.append([payment.fund_name, payment.company, payment.country,
-                               payment.dividend, payment.purchase_price])
+                    # We only need to report the dividends for last year.
+                    last_year = datetime.date.today().year - 1
+                    if payment.date_time.year != last_year:
+                        continue
+                    ws.append(
+                        [
+                            payment.date_time,
+                            payment.fund_name,
+                            payment.company,
+                            payment.country,
+                            payment.dividend,
+                            payment.purchase_price,
+                        ]
+                    )
 
+                    # Format the date as DD.MM.YYYY.
+                    ws.cell(ws.max_row, 1).number_format = "DD.MM.YYYY"
                     # Format the currencies.
                     # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
-                    number_format = '#,##0.00 [$' + payment.currency + '];[RED]-#,##0.00 [$' + payment.currency + ']'
+                    number_format = (
+                        "#,##0.00 [$"
+                        + payment.currency
+                        + "];[RED]-#,##0.00 [$"
+                        + payment.currency
+                        + "]"
+                    )
                     # Format the share price as a currency.
-                    ws.cell(ws.max_row, 4).number_format = number_format
-                    # Format the purchase price as a currency.
                     ws.cell(ws.max_row, 5).number_format = number_format
+                    # Format the purchase price as a currency.
+                    ws.cell(ws.max_row, 6).number_format = number_format
 
                 # Insert an empty row inbetween each fund.
                 ws.append([])

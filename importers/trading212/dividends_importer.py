@@ -3,6 +3,7 @@ import csv
 import decimal
 from dividend_collection import DividendCollection
 from typeguard import typechecked
+from datetime import datetime
 
 FUND_DOMICILE_MAPPING = {
     "IWQU": "Ireland",
@@ -62,5 +63,5 @@ class Trading212DividendsImporter:
                 if not country:
                     print("Error could not find domicile " + ticker + " add it to FUND_DOMICILE_MAPPING!")
                     exit()
-                dividend_payment = DividendPayment(security, company, dividend, country, tax_paid, currency, purchase_price)
+                dividend_payment = DividendPayment(security, company, dividend, country, tax_paid, currency, purchase_price, date_time)
                 collection.append(dividend_payment)
