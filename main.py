@@ -15,9 +15,9 @@ from openpyxl.styles import Font, PatternFill
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--binck-transactions', dest='transactions_binck', help='The path to an excel file detailing BinckBank transactions.')
-    parser.add_argument('--trading212-transactions', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions + dividends.')
-    parser.add_argument('--saxo-transactions', dest='transactions_saxo', help='The path to an excel file detailing Saxo transactions.')
+    parser.add_argument('--binck-transactions', '--binck', dest='transactions_binck', help='The path to an excel file detailing BinckBank transactions.')
+    parser.add_argument('--trading212-transactions', '--t212', dest='transactions_trading212', help='The path to an csv file detailing Trading 212 transactions + dividends.', action='append', nargs='*')
+    parser.add_argument('--saxo-transactions', '--saxo', dest='transactions_saxo', help='The path to an excel file detailing Saxo transactions.')
     args = parser.parse_args()
 
     # If the user doesn't supply input print the help and exit.
@@ -29,8 +29,12 @@ if __name__ == '__main__':
     payments = DividendCollection()
 
     if args.transactions_trading212:
-        Trading212TransactionsImporter.import_transactions(transactions, args.transactions_trading212)
-        Trading212DividendsImporter.import_dividends(payments, args.transactions_trading212)
+        # Loop over the CSV files.
+        for csv_files in args.transactions_trading212:
+            # Argparse allows to add multiple values for an option in a row.
+            for csv_file in csv_files:
+                Trading212TransactionsImporter.import_transactions(transactions, csv_file)
+                Trading212DividendsImporter.import_dividends(payments, csv_file)
 
     if args.transactions_binck:
         BinckTransactionsImporter.import_transactions(transactions, args.transactions_binck)

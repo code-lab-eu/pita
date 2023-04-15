@@ -11,7 +11,8 @@ FUND_DOMICILE_MAPPING = {
     "IS3S": "Ireland",
     "IQQH": "Ireland",
     "EUNL": "Ireland",
-    "EUNA": "Ireland"
+    "EUNA": "Ireland",
+    "SXR8": "Ireland",
 }
 
 FUND_NAME_MAPPING = {
@@ -31,12 +32,23 @@ class Trading212TransactionsImporter:
     def import_transactions(collection, file_name):
         with open(file_name, newline='') as csvfile:
             csvreader = csv.reader(csvfile)
-            # We skip the first line, because it shows column headers
-            first_line_file_list = ['Action','Time','ISIN','Ticker','Name','No. of shares', 'Price / share','Currency (Price / share)','Exchange rate','Result (EUR)','Total (EUR)','Withholding tax','Currency (Withholding tax)','Charge amount (EUR)','Notes',"ID\n"]
-            first_line = csvfile.readline().split(',')
-            if len(first_line_file_list) != len(first_line):
-                 raise Exception("Check the amount of the colums! Unexpected columns!")
 
+            # If the actually imported headers are not the same as the expected headers, the format has changed and we
+            # need to check if the parsing logic still applies. Log the differences and exit.
+            # Todo: It looks like Trading212 changes the format of the CSV file every now and then. Since we have to
+            #  export the data year by year it would be too much work to export all the data again every year. Instead
+            #  we should inspect the headers and get the data from the right columns.
+            expected_headers = ['Action','Time','ISIN','Ticker','Name','No. of shares', 'Price / share','Currency (Price / share)','Exchange rate','Total (EUR)','Charge amount (EUR)','Notes',"ID\n"]
+            actual_headers = csvfile.readline().split(',')
+            if expected_headers != actual_headers:
+                print("The headers of the imported file are not the same as the expected headers!")
+                print("Expected headers:")
+                print(expected_headers)
+                print("Actual headers:")
+                print(actual_headers)
+                exit()
+
+            # We skip the first line, because it shows column headers
             next(csvreader)
             for row in csvreader:
 
@@ -54,7 +66,7 @@ class Trading212TransactionsImporter:
                 number = decimal.Decimal(row[5])
                 share_price = decimal.Decimal(row[6])
                 currency = row[7]
-                purchase_price = decimal.Decimal(row[10])
+                purchase_price = decimal.Decimal(row[9])
                 ticker = row[3]
                 domicile = FUND_DOMICILE_MAPPING.get(ticker)
                 if not domicile:
@@ -63,5 +75,3 @@ class Trading212TransactionsImporter:
                 transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price,
                                           currency, purchase_price)
                 collection.append(transaction)
-
-

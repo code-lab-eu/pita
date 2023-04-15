@@ -8,9 +8,12 @@ investment returns.
 Usage
 -----
 
-Install required dependencies:
-
 ```
+# Create a virtual environment:
+$ python -m venv env
+# Activate the virtual environment:
+$ source env/bin/activate
+# Install required dependencies:
 $ pip install -r requirements.txt
 ```
 
@@ -31,3 +34,18 @@ Saxo Bank
 * Period: last year.
 * Ensure to select all products and transaction types.
 * Export as Excel sheet.
+
+
+Trading 212
+-----------
+
+* Open the Trading212 website.
+* Go to History and click the "Export" button in the top right.
+* Select a time frame from January 1 to 31 December and click "Export CSV". It is only possible to export 12 months of
+  data, so you need to do this multiple times.
+* A few moments later a notification will appear that the export is ready. Click the "Download" button.
+
+```
+# Example: process 2 yearly exports from Trading 212.
+$ python main.py --t212 t212-2021.csv t212-2022.csv
+```
