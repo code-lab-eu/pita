@@ -29,11 +29,19 @@ The following investment brokers are supported:
 Saxo Bank
 ---------
 
-* Open the saxoinvester website.
-* Historical reports > Transaction report.
-* Period: last year.
-* Ensure to select all products and transaction types.
-* Export as Excel sheet.
+* Open the Saxo Trader Go website (not Saxoinvestor).
+* Go to Account > Historical reports.
+* Open the "Trades" view. Select a custom period starting with the opening of
+  the account. Export as an Excel sheet.
+* Open the "Share dividends" dialog. Choose last year as the period. Export as
+  an Excel sheet.
+* Open the "Closed positions" dialog. Select a custom period sarting with the
+  opening of the account. Export as an Excel sheet.
+
+```
+# Example: process the Excel exports from Saxo Bank.
+$ python main.py --saxo-trades TradesExecuted_123456.xlsx --saxo-dividends ShareDividends_123456.xlsx --saxo-closed-positions ClosedPositions_123456.xlsx
+```
 
 
 Trading 212

@@ -31,10 +31,19 @@ if __name__ == "__main__":
         nargs="*",
     )
     parser.add_argument(
-        "--saxo-transactions",
-        "--saxo",
-        dest="transactions_saxo",
-        help="The path to an excel file detailing Saxo transactions.",
+        "--saxo-trades",
+        dest="saxo_trades",
+        help="The path to an excel file detailing Saxo trades.",
+    )
+    parser.add_argument(
+        "--saxo-dividends",
+        dest="saxo_dividends",
+        help="The path to an excel file detailing Saxo dividends.",
+    )
+    parser.add_argument(
+        "--saxo-closed-positions",
+        dest="saxo_closed_positions",
+        help="The path to an excel file detailing Saxo closed positions.",
     )
     args = parser.parse_args()
 
@@ -61,9 +70,14 @@ if __name__ == "__main__":
             transactions, args.transactions_binck
         )
 
-    if args.transactions_saxo:
-        SaxoImporter.import_transactions(transactions, args.transactions_saxo)
-        SaxoDividendsImporter.import_dividends(payments, args.transactions_saxo)
+    if args.saxo_trades:
+        SaxoImporter.import_transactions(transactions, args.saxo_trades)
+
+    if args.saxo_dividends:
+        SaxoDividendsImporter.import_dividends(payments, args.saxo_dividends)
+
+    if args.saxo_closed_positions:
+        SaxoImporter.import_closed_positions(transactions, args.saxo_closed_positions)
 
     # Export the transactions to an Excel file.
     if not transactions.is_empty():
@@ -81,6 +95,7 @@ if __name__ == "__main__":
         ws["F1"] = "Share price"
         ws["G1"] = "Total shares"
         ws["H1"] = "Purchase price"
+        ws["I1"] = "Profit/Loss"
 
         # Set a blue background color and white font color on row 1 (the header row).
         for cell in ws[1]:
@@ -89,13 +104,14 @@ if __name__ == "__main__":
 
         # Column widths.
         ws.column_dimensions["A"].width = 40
-        ws.column_dimensions["B"].width = 10
+        ws.column_dimensions["B"].width = 15
         ws.column_dimensions["C"].width = 20
         ws.column_dimensions["D"].width = 20
         ws.column_dimensions["E"].width = 15
         ws.column_dimensions["F"].width = 15
         ws.column_dimensions["G"].width = 15
         ws.column_dimensions["H"].width = 15
+        ws.column_dimensions["I"].width = 15
 
         transactions.calc_total_shares()
         transactions.sort_by_date(True)
@@ -115,6 +131,7 @@ if __name__ == "__main__":
                         transaction.share_price,
                         transaction.total,
                         transaction.purchase_price,
+                        transaction.profit_loss,
                     ]
                 )
 
@@ -141,6 +158,9 @@ if __name__ == "__main__":
                 ws.cell(ws.max_row, 6).number_format = number_format
                 # Format the purchase price as a currency.
                 ws.cell(ws.max_row, 8).number_format = number_format
+                # Format the profit/loss as a currency if it is not empty.
+                if transaction.profit_loss != "":
+                    ws.cell(ws.max_row, 9).number_format = number_format
 
             # Insert an empty row inbetween each fund.
             ws.append([])
@@ -220,3 +240,4 @@ if __name__ == "__main__":
             # Save the file
             wb.save("dividends.xlsx")
             print("Saved file dividends.xlsx!")
+
