@@ -22,15 +22,18 @@ class Trading212DividendsImporter:
         with open(file_name, newline='') as csvfile:
             csvreader = csv.reader(csvfile)
 
-            # If the actually imported headers are not the same as the expected headers, the format has changed and we
-            # need to check if the parsing logic still applies. Log the differences and exit.
-            # Todo: It looks like Trading212 changes the format of the CSV file every now and then. Since we have to
-            #  export the data year by year it would be too much work to export all the data again every year. Instead
-            #  we should inspect the headers and get the data from the right columns.
-            required_headers = ['Name', 'Time', 'Action', 'Total (EUR)', 'Currency (Price / share)', 'Withholding tax', 'Ticker', ]
+            # If the 'Withholding tax' column is missing, we are dealing with an account that doesn't pay any dividends.
+            # In this case we can just skip the file.
             actual_headers = csvfile.readline().split(',')
+            if 'Withholding tax' not in actual_headers:
+                return
+
+            # Check that we have all the required headers.
+            required_headers = ['Name', 'Time', 'Action', 'Total (EUR)', 'Currency (Price / share)', 'Withholding tax', 'Ticker', ]
             for required_header in required_headers:
                 if required_header not in actual_headers:
+                    # A required header is missing. Probably the format of the CSV file has changed. Log an error and
+                    # exit.
                     print("Missing required header %s in Trading 212 file" % required_header)
                     exit()
             header_mapping = {}
