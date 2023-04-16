@@ -21,7 +21,7 @@ class BinckTransactionsImporter:
             transaction_type = sheet.cell(row=i, column=4).value
             number = decimal.Decimal(sheet.cell(row=i, column=5).value)
             share_price = decimal.Decimal(sheet.cell(row=i, column=6).value)
-            currency = sheet.cell(row=i, column=6).number_format[2:5]
+            currency = "EUR"
             purchase_price = share_price * number
             transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price,
                                       currency, purchase_price)
