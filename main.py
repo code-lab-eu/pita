@@ -169,6 +169,70 @@ if __name__ == "__main__":
         wb.save("investments.xlsx")
         print("Saved file investments.xlsx!")
 
+        # Sales report
+        if not transactions.is_empty():
+            wb = Workbook()
+
+            # Grab the active worksheet.
+            ws = wb.active
+
+            # Create the header row.
+            ws["A1"] = "Security"
+            ws["B1"] = "Company"
+            ws["C1"] = "Country"
+            ws["D1"] = "Profit"
+
+            # Set a blue background color and white font color on row 1 (the header row).
+            for cell in ws[1]:
+                cell.fill = PatternFill(start_color="0066CC", fill_type="solid")
+                cell.font = Font(name="Calibri", color="FFFFFF")
+
+            # Column widths.
+            ws.column_dimensions["A"].width = 40
+            ws.column_dimensions["B"].width = 10
+            ws.column_dimensions["C"].width = 10
+            ws.column_dimensions["D"].width = 20
+
+            fund_names = transactions.get_fund_names()
+            for fund_name in fund_names:
+                fund_transactions = transactions.get_fund_transactions(fund_name)
+
+                profit = 0
+                transaction = None
+                for transaction in fund_transactions:
+                    # We only need to report sales in the past year.
+                    if transaction.transaction_type != "Sell":
+                        continue
+                    if transaction.date_time.year != datetime.date.today().year - 1:
+                        continue
+                    profit += transaction.profit_loss
+
+                if transaction:
+                    fund_name = transaction.fund_name
+                    company = transaction.fund_name.split(" ")[0]
+                    ws.append(
+                        [
+                            transaction.fund_name,
+                            company,
+                            transaction.domicile,
+                            profit
+                        ]
+                    )
+
+                    # Format the currency.
+                    number_format = (
+                        "#,##0.00 [$"
+                        + transaction.currency
+                        + "];[RED]-#,##0.00 [$"
+                        + transaction.currency
+                        + "]"
+                    )
+                    ws.cell(ws.max_row, 4).number_format = number_format
+
+            # Save the file
+            wb.save("sales.xlsx")
+            print("Saved file sales.xlsx!")
+
         # Dividend payments
         if not payments.is_empty():
             wb = Workbook()
