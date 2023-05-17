@@ -1,3 +1,6 @@
+import datetime
+
+
 class Transaction:
     FUND_ALIASES = {
         'iShares S&P Global Clean Energy ETF': 'iShares Global Clean Energy UCITS ETF',
@@ -17,7 +20,7 @@ class Transaction:
         'Purchase': 'Buy',
     }
 
-    def __init__(self, fund_name, domicile, date_time, transaction_type, number, share_price, currency, purchase_price, profit_loss=None):
+    def __init__(self, fund_name, domicile, date_time: datetime, transaction_type, number, share_price, currency, purchase_price, profit_loss=None):
         self.fund_name = self.resolve_alias("fund_name", fund_name)
         self.domicile = domicile
         self.date_time = date_time

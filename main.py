@@ -9,6 +9,8 @@ from importers.saxo.dividends_importer import SaxoDividendsImporter
 from importers.saxo.transactions_importer import SaxoImporter
 from transaction_collection import TransactionCollection
 from dividend_collection import DividendCollection
+from appendix8row import Appendix8Row
+from decimal import Decimal
 
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
@@ -305,3 +307,70 @@ if __name__ == "__main__":
             wb.save("dividends.xlsx")
             print("Saved file dividends.xlsx!")
 
+            # Export the Excel sheet for appendix 8.
+            if not transactions.is_empty():
+                wb = Workbook()
+
+                # Grab the active worksheet.
+                ws = wb.active
+
+                # Create the header row.
+                ws["A1"] = "Domicile"
+                ws["B1"] = "Number"
+                ws["C1"] = "Transaction date"
+                ws["D1"] = "Total price origin currency"
+                ws["E1"] = "Total price in BGN"
+
+                # Set a blue background color and white font color on row 1 (the header row).
+                for cell in ws[1]:
+                    cell.fill = PatternFill(start_color="0066CC", fill_type="solid")
+                    cell.font = Font(name="Calibri", color="FFFFFF")
+
+                # Column widths.
+                ws.column_dimensions["A"].width = 20
+                ws.column_dimensions["B"].width = 20
+                ws.column_dimensions["C"].width = 20
+                ws.column_dimensions["D"].width = 20
+                ws.column_dimensions["E"].width = 20
+
+                transactions.sort_by_date(False)
+
+                # For the Appendix 8 report we need a list of the number of stocks that have been bought on a particular
+                # day, along with the price in the original currency and in leva.
+                appendix8rows = {}
+
+                for transaction in transactions.transactions:
+                    date = transaction.date_time.date()
+                    domicile = transaction.domicile
+                    # Check if we already have a row for the current date and domicile. If not, create one.
+                    if not (date, domicile) in appendix8rows:
+                        appendix8rows[(date, domicile)] = Appendix8Row(date, domicile)
+                    appendix8rows[(date, domicile)].add_transaction(transaction)
+
+                # Add the rows to the Excel sheet.
+                for row in appendix8rows.values():
+                    ws.append(
+                        [
+                            row.domicile,
+                            row.number,
+                            row.date,
+                            row.price_eur,
+                            row.price_eur * Decimal(1.95583),
+                        ]
+                    )
+
+                    # Format the date as DD.MM.YYYY.
+                    ws.cell(ws.max_row, 3).number_format = "DD.MM.YYYY"
+
+                    # Format the currencies.
+                    # See https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=en-us&rs=en-us&ad=us
+                    number_format_eur = "#,##0.00 [$EUR];[RED]-#,##0.00 [$EUR]"
+                    number_format_bgn = "#,##0.00 [$BGN];[RED]-#,##0.00 [$BGN]"
+                    # Format the share price as a currency.
+                    ws.cell(ws.max_row, 4).number_format = number_format_eur
+                    # Format the purchase price as a currency.
+                    ws.cell(ws.max_row, 5).number_format = number_format_bgn
+
+                # Save the file
+                wb.save("investments_appendix8.xlsx")
+                print("Saved file investments_appendix8.xlsx!")
