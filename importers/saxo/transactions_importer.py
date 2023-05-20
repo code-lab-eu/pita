@@ -8,7 +8,7 @@ FUND_DOMICILE_MAPPING = {
     "iShares Core Euro Corporate Bond UCITS ETF": "Ireland",
     "iShares Core Global Aggregate Bond UCITS ETF": "Ireland",
     "iShares Core MSCI World UCITS ETF": "Ireland",
-    "iShares EM Infrastructure UCITS ETF" : "Ireland",
+    "iShares EM Infrastructure UCITS ETF": "Ireland",
     "iShares Emerging Markets Local Gov Bond UCITS ETF": "Ireland",
     "iShares FTSE/EPRA European Property EUR UCITS ETF": "Ireland",
     "iShares High Yield Corp. Bond UCITS ETF": "Ireland",
@@ -27,7 +27,16 @@ class SaxoImporter:
         sheet2 = workbook.worksheets[1]
 
         # Check that we have the required headers, and create a mapping from header name to column index.
-        required_headers = ["Instrument", "TradeTime", "B/S", "Amount", "Trade Value", "Price", "Account ID", "Open/Close"]
+        required_headers = [
+            "Instrument",
+            "TradeTime",
+            "B/S",
+            "Amount",
+            "Trade Value",
+            "Price",
+            "Account ID",
+            "Open/Close",
+        ]
         headers = {}
 
         for required_header in required_headers:
@@ -39,30 +48,44 @@ class SaxoImporter:
                     header_found = True
                     break
             if not header_found:
-                print("Error: Could not find required header " + required_header + " in file " + file_name)
+                print(
+                    "Error: Could not find required header "
+                    + required_header
+                    + " in file "
+                    + file_name
+                )
                 exit()
 
         # We are starting from row 2, because the first row is a title.
         for i in range(2, sheet.max_row + 1):
-
             # Skip sales, these are handled by import_closed_positions()
             if sheet.cell(row=i, column=headers["Open/Close"]).value != "Open":
                 continue
 
-            date_time = sheet.cell(row=i, column=headers['TradeTime']).value
+            date_time = sheet.cell(row=i, column=headers["TradeTime"]).value
             # Convert the date in format "'17-May-2021" to a datetime object.
             date_time = datetime.datetime.strptime(date_time, "%d-%b-%Y")
 
             # The most clean fund name is in the second sheet.
             fund_name = sheet2.cell(row=i, column=42).value
             domicile = FUND_DOMICILE_MAPPING.get(fund_name)
-            transaction_type = sheet.cell(row=i, column=headers['B/S']).value
+            transaction_type = sheet.cell(row=i, column=headers["B/S"]).value
             number = decimal.Decimal(sheet.cell(row=i, column=headers["Amount"]).value)
-            share_price = decimal.Decimal(sheet.cell(row=i, column=headers["Price"]).value)
+            share_price = decimal.Decimal(
+                sheet.cell(row=i, column=headers["Price"]).value
+            )
             currency = sheet.cell(row=i, column=headers["Account ID"]).value[-3:]
             purchase_price = share_price * number
-            transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price,
-                                      currency, purchase_price)
+            transaction = Transaction(
+                fund_name,
+                domicile,
+                date_time,
+                transaction_type,
+                number,
+                share_price,
+                currency,
+                purchase_price,
+            )
             collection.append(transaction)
 
     @staticmethod
@@ -71,7 +94,14 @@ class SaxoImporter:
         sheet = workbook.active
 
         # Check that we have the required headers, and create a mapping from header name to column index.
-        required_headers = ["Instrument Description", "Trade Date Close", "Account Currency", "AmountClose", "Close Price", "PnLAccountCurrency"]
+        required_headers = [
+            "Instrument Description",
+            "Trade Date Close",
+            "Account Currency",
+            "AmountClose",
+            "Close Price",
+            "PnLAccountCurrency",
+        ]
         headers = {}
 
         for required_header in required_headers:
@@ -83,25 +113,46 @@ class SaxoImporter:
                     header_found = True
                     break
             if not header_found:
-                print("Error: Could not find required header " + required_header + " in file " + file_name)
+                print(
+                    "Error: Could not find required header "
+                    + required_header
+                    + " in file "
+                    + file_name
+                )
                 exit()
 
         # We are starting from row 2, because the first row is a title.
         for i in range(2, sheet.max_row + 1):
+            fund_name = sheet.cell(
+                row=i, column=headers["Instrument Description"]
+            ).value
 
-            fund_name = sheet.cell(row=i, column=headers["Instrument Description"]).value
-
-            date_time = sheet.cell(row=i, column=headers['Trade Date Close']).value
+            date_time = sheet.cell(row=i, column=headers["Trade Date Close"]).value
             # Convert the date in format "'17-May-2021" to a datetime object.
             date_time = datetime.datetime.strptime(date_time, "%d-%b-%Y")
 
             domicile = FUND_DOMICILE_MAPPING.get(fund_name)
             transaction_type = "Sold"
-            number = decimal.Decimal(sheet.cell(row=i, column=headers["AmountClose"]).value)
-            share_price = decimal.Decimal(sheet.cell(row=i, column=headers["Close Price"]).value)
+            number = decimal.Decimal(
+                sheet.cell(row=i, column=headers["AmountClose"]).value
+            )
+            share_price = decimal.Decimal(
+                sheet.cell(row=i, column=headers["Close Price"]).value
+            )
             currency = sheet.cell(row=i, column=headers["Account Currency"]).value[-3:]
             purchase_price = share_price * number
-            profit_loss = decimal.Decimal(sheet.cell(row=i, column=headers["PnLAccountCurrency"]).value)
-            transaction = Transaction(fund_name, domicile, date_time, transaction_type, number, share_price,
-                                      currency, purchase_price, profit_loss)
+            profit_loss = decimal.Decimal(
+                sheet.cell(row=i, column=headers["PnLAccountCurrency"]).value
+            )
+            transaction = Transaction(
+                fund_name,
+                domicile,
+                date_time,
+                transaction_type,
+                number,
+                share_price,
+                currency,
+                purchase_price,
+                profit_loss,
+            )
             collection.append(transaction)
