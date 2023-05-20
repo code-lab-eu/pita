@@ -213,12 +213,7 @@ if __name__ == "__main__":
                     fund_name = transaction.fund_name
                     company = transaction.fund_name.split(" ")[0]
                     ws.append(
-                        [
-                            transaction.fund_name,
-                            company,
-                            transaction.domicile,
-                            profit
-                        ]
+                        [transaction.fund_name, company, transaction.domicile, profit]
                     )
 
                     # Format the currency.
