@@ -77,9 +77,13 @@ class Trading212TransactionsImporter:
                 if row[0] == "Dividend (Ordinary)":
                     continue
 
-                date_time = datetime.strptime(
-                    row[header_rows["date_time"]], "%Y-%m-%d %H:%M:%S"
-                )
+                # The date format has changed. Older exports have the date in the format "2021-05-17 00:00:00", while
+                # newer exports have the date in the format "2021-05-17 00:00:00.000". We need to handle both cases.
+                try:
+                    date_time = datetime.strptime(row[header_rows["date_time"]], "%Y-%m-%d %H:%M:%S.%f")
+                except ValueError:
+                    date_time = datetime.strptime(row[header_rows["date_time"]], "%Y-%m-%d %H:%M:%S")
+
                 transaction_type = row[header_rows["transaction_type"]]
                 number = decimal.Decimal(row[header_rows["number"]])
                 share_price = decimal.Decimal(row[header_rows["share_price"]])
