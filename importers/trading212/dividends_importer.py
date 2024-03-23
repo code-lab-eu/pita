@@ -63,8 +63,8 @@ class Trading212DividendsImporter:
                 if not security:
                     continue
 
-                # The transaction list should only contain buys and sells. Skip dividends.
-                if row[0] != "Dividend (Ordinary)":
+                # The report contains transactions as well as dividends. We are only interested in dividends.
+                if not row[0].startswith("Dividend"):
                     continue
                 date_time = datetime.strptime(
                     row[header_rows["date_time"]], "%Y-%m-%d %H:%M:%S"

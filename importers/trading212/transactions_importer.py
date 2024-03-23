@@ -74,7 +74,7 @@ class Trading212TransactionsImporter:
                     continue
 
                 # The transaction list should only contain buys and sells. Skip dividends.
-                if row[0] == "Dividend (Ordinary)":
+                if row[0].startswith("Dividend"):
                     continue
 
                 # The date format has changed. Older exports have the date in the format "2021-05-17 00:00:00", while
