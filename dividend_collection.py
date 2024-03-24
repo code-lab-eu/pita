@@ -19,7 +19,7 @@ class DividendCollection:
         return fund_names
 
     # Returns all dividend payments for the given fund.
-    def get_fund_payments(self, fund_name):
+    def get_fund_payments(self, fund_name) -> list[DividendPayment]:
         fund_payments = []
         for payment in self.payments:
             if payment.fund_name == fund_name:
