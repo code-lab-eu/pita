@@ -16,6 +16,7 @@ class DividendPayment:
         self.country = country
         self.tax_paid = tax_paid
         self.currency = currency
+        # Todo: This seems to be mislabeled, in the export this is the withholding tax.
         self.purchase_price = purchase_price
         self.date_time = date_time
 
