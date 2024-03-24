@@ -295,7 +295,7 @@ if __name__ == "__main__":
                             payment.company,
                             payment.country,
                             payment.dividend,
-                            payment.purchase_price,
+                            payment.tax_paid,
                         ]
                     )
 

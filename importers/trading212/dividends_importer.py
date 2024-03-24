@@ -72,10 +72,9 @@ class Trading212DividendsImporter:
                 company = security.split(" ")[header_rows["action"]]
                 dividend = decimal.Decimal(row[header_rows["dividend"]])
                 currency = row[header_rows["currency"]]
-                purchase_price = decimal.Decimal(row[header_rows["tax_paid"]])
+                tax_paid = decimal.Decimal(row[header_rows["tax_paid"]])
                 ticker = row[header_rows["ticker"]]
                 country = FUND_DOMICILE_MAPPING.get(ticker)
-                tax_paid = row[header_rows["tax_paid"]]
                 if not country:
                     print(
                         "Error could not find domicile "
@@ -90,7 +89,6 @@ class Trading212DividendsImporter:
                     country,
                     tax_paid,
                     currency,
-                    purchase_price,
                     date_time,
                 )
                 collection.append(dividend_payment)

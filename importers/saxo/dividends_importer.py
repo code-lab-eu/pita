@@ -73,7 +73,6 @@ class SaxoDividendsImporter:
                 sheet.cell(row=i, column=headers["Booked Amount (EUR)"]).value
             )
             currency = sheet.cell(row=i, column=headers["Account Currency"]).value
-            purchase_price = 0.00
             tax_paid = sheet.cell(row=i, column=headers["Total Tax (EUR)"]).value
             country = FUND_DOMICILE_MAPPING.get(security)
             if not country:
@@ -90,7 +89,6 @@ class SaxoDividendsImporter:
                 country,
                 tax_paid,
                 currency,
-                purchase_price,
                 date_time,
             )
             collection.append(dividend_payment)

@@ -42,6 +42,5 @@ class PitaDividendsImporter:
                 dividend=dividend,
                 tax_paid=tax_paid,
                 currency="EUR",
-                purchase_price=0.00,
             )
             collection.append(dividend_payment)
