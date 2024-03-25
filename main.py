@@ -2,20 +2,20 @@ import argparse
 import datetime
 import sys
 
-from importers.trading212.transactions_importer import Trading212TransactionsImporter
 from importers.binck.transactions_importer import BinckTransactionsImporter
-from importers.trading212.dividends_importer import Trading212DividendsImporter
+from importers.interactivebrokers.dividends_importer import InteractiveBrokersDividendsImporter
+from importers.interactivebrokers.transactions_importer import InteractiveBrokersImporter
+from importers.pita.dividends_importer import PitaDividendsImporter
+from importers.pita.transactions_importer import PitaTransactionsImporter
 from importers.saxo.dividends_importer import SaxoDividendsImporter
 from importers.saxo.transactions_importer import SaxoImporter
-from importers.interactivebrokers.dividends_importer import (
-    InteractiveBrokersDividendsImporter,
-)
-from importers.interactivebrokers.transactions_importer import (
-    InteractiveBrokersImporter,
-)
+from importers.trading212.dividends_importer import Trading212DividendsImporter
+from importers.trading212.transactions_importer import Trading212TransactionsImporter
+
 from transaction_collection import TransactionCollection
 from dividend_collection import DividendCollection
 from appendix8row import Appendix8Row
+
 from decimal import Decimal
 
 from openpyxl import Workbook
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         "--binck-transactions",
         "--binck",
         dest="transactions_binck",
-        help="The path to an excel file detailing BinckBank transactions.",
+        help="The path to an Excel file detailing BinckBank transactions.",
     )
     parser.add_argument(
         "--trading212-transactions",
@@ -41,17 +41,27 @@ if __name__ == "__main__":
     parser.add_argument(
         "--saxo-trades",
         dest="saxo_trades",
-        help="The path to an excel file detailing Saxo trades.",
+        help="The path to an Excel file detailing Saxo trades.",
     )
     parser.add_argument(
         "--saxo-dividends",
         dest="saxo_dividends",
-        help="The path to an excel file detailing Saxo dividends.",
+        help="The path to an Excel file detailing Saxo dividends.",
     )
     parser.add_argument(
         "--saxo-closed-positions",
         dest="saxo_closed_positions",
-        help="The path to an excel file detailing Saxo closed positions.",
+        help="The path to an Excel file detailing Saxo closed positions.",
+    )
+    parser.add_argument(
+        "--pita-investments",
+        dest="pita_investments",
+        help="The path to an Excel file containing our own exported investments.",
+    )
+    parser.add_argument(
+        "--pita-dividends",
+        dest="pita_dividends",
+        help="The path to an Excel file containing our own exported dividends.",
     )
     parser.add_argument(
         "--interactivebr-transactions",
@@ -107,6 +117,12 @@ if __name__ == "__main__":
             payments, args.dividends_interactivebr
         )
 
+    if args.pita_investments:
+        PitaTransactionsImporter.import_transactions(transactions, args.pita_investments)
+
+    if args.pita_dividends:
+        PitaDividendsImporter.import_dividends(payments, args.pita_dividends)
+
     # Export the transactions to an Excel file.
     if not transactions.is_empty():
         wb = Workbook()
@@ -147,7 +163,7 @@ if __name__ == "__main__":
         for fund_name in fund_names:
             fund_transactions = transactions.get_fund_transactions(fund_name)
 
-            # Add each transaction as a new row in the excel sheet.
+            # Add each transaction as a new row in the Excel sheet.
             for transaction in fund_transactions:
                 ws.append(
                     [
@@ -288,7 +304,7 @@ if __name__ == "__main__":
             for fund_name in fund_names:
                 fund_payments = payments.get_fund_payments(fund_name)
 
-                # Add each transaction as a new row in the excel sheet.
+                # Add each transaction as a new row in the Excel sheet.
                 for payment in fund_payments:
                     # We only need to report the dividends for last year.
                     last_year = datetime.date.today().year - 1
@@ -301,7 +317,7 @@ if __name__ == "__main__":
                             payment.company,
                             payment.country,
                             payment.dividend,
-                            payment.purchase_price,
+                            payment.tax_paid,
                         ]
                     )
 

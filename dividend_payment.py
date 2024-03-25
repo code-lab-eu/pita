@@ -7,7 +7,6 @@ class DividendPayment:
         country,
         tax_paid,
         currency,
-        purchase_price,
         date_time,
     ):
         self.fund_name = fund_name
@@ -16,12 +15,11 @@ class DividendPayment:
         self.country = country
         self.tax_paid = tax_paid
         self.currency = currency
-        self.purchase_price = purchase_price
         self.date_time = date_time
 
     def __repr__(self):
         return (
-            "Dividend fund_name: %s, company: %s, dividend: %s, country: %s, tax_paid: %s, currency: %s, purchase price: %s, date_time: %s"
+            "Dividend fund_name: %s, company: %s, dividend: %s, country: %s, tax_paid: %s, currency: %s, date_time: %s"
             % (
                 self.fund_name,
                 self.company,
@@ -29,7 +27,6 @@ class DividendPayment:
                 self.country,
                 self.tax_paid,
                 self.currency,
-                self.purchase_price,
                 self.date_time,
             )
         )

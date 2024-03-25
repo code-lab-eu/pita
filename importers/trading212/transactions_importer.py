@@ -33,57 +33,63 @@ class Trading212TransactionsImporter:
         with open(file_name, newline="") as csvfile:
             csvreader = csv.reader(csvfile)
 
-            # If the actually imported headers are not the same as the expected headers, the format has changed and we
-            # need to check if the parsing logic still applies. Log the differences and exit.
-            # Todo: It looks like Trading212 changes the format of the CSV file every now and then. Since we have to
-            #  export the data year by year it would be too much work to export all the data again every year. Instead
-            #  we should inspect the headers and get the data from the right columns.
-            required_headers = [
-                "Action",
-                "Time",
-                "No. of shares",
-                "Price / share",
-                "Total (EUR)",
-                "Ticker",
-                "Name",
-                "Currency (Price / share)",
-            ]
+            # Trading212 changes the format of the CSV file from time to time. Since we have to export the data year by
+            # year it is great if we can support historic exports, so we don't need to export ALL the data again every
+            # year. For each required column we have a list of historic headers.
+            header_mappings = {
+                "transaction_type": ["Action"],
+                "date_time": ["Time"],
+                "number": ["No. of shares"],
+                "share_price": ["Price / share"],
+                "purchase_price": ["Total (EUR)", "Total"],
+                "ticker": ["Ticker"],
+                "fund_name": ["Name"],
+                "currency": ["Currency (Price / share)"],
+            }
+            # We need to check if the format is still the same as expected. If the actual headers are not the same as
+            # the expected headers, the format has changed, and we need to check if the parsing logic still applies. Log
+            # the differences and exit.
             actual_headers = csvfile.readline().split(",")
-            for required_header in required_headers:
-                if required_header not in actual_headers:
+            for required_header in header_mappings.values():
+                if not any(header in actual_headers for header in required_header):
                     print(
-                        "Missing required header %s in Trading 212 file"
-                        % required_header
+                        "Missing required header in Trading 212 file: %s"
+                        % ", ".join(required_header)
                     )
                     exit()
-            header_mapping = {}
-            for required_header in required_headers:
+
+            header_rows = {}
+            for required_header, headings in header_mappings.items():
                 for i, j in enumerate(actual_headers):
-                    if j == required_header:
-                        header_mapping[required_header] = i
+                    if j in headings:
+                        header_rows[required_header] = i
                         break
 
-            # We skip the first line, because it shows column headers
+            # We skip the first line, because it contains column headers.
             next(csvreader)
             for row in csvreader:
                 # If we don't have the fund this row is a bank transaction. Skip it!
-                fund_name = row[header_mapping["Name"]]
+                fund_name = row[header_rows["fund_name"]]
                 if not fund_name:
                     continue
 
                 # The transaction list should only contain buys and sells. Skip dividends.
-                if row[0] == "Dividend (Ordinary)":
+                if row[0].startswith("Dividend"):
                     continue
 
-                date_time = datetime.strptime(
-                    row[header_mapping["Time"]], "%Y-%m-%d %H:%M:%S"
-                )
-                transaction_type = row[header_mapping["Action"]]
-                number = decimal.Decimal(row[header_mapping["No. of shares"]])
-                share_price = decimal.Decimal(row[header_mapping["Price / share"]])
-                currency = row[header_mapping["Currency (Price / share)"]]
-                purchase_price = decimal.Decimal(row[header_mapping["Total (EUR)"]])
-                ticker = row[header_mapping["Ticker"]]
+                # The date format has changed. Older exports have the date in the format "2021-05-17 00:00:00", while
+                # newer exports have the date in the format "2021-05-17 00:00:00.000". We need to handle both cases.
+                try:
+                    date_time = datetime.strptime(row[header_rows["date_time"]], "%Y-%m-%d %H:%M:%S.%f")
+                except ValueError:
+                    date_time = datetime.strptime(row[header_rows["date_time"]], "%Y-%m-%d %H:%M:%S")
+
+                transaction_type = row[header_rows["transaction_type"]]
+                number = decimal.Decimal(row[header_rows["number"]])
+                share_price = decimal.Decimal(row[header_rows["share_price"]])
+                currency = row[header_rows["currency"]]
+                purchase_price = decimal.Decimal(row[header_rows["purchase_price"]])
+                ticker = row[header_rows["ticker"]]
                 domicile = FUND_DOMICILE_MAPPING.get(ticker)
                 if not domicile:
                     print(
