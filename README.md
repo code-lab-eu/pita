@@ -26,6 +26,20 @@ $ python main.py
 The following investment brokers are supported:
 
 
+Interactive Brokers
+-------------------
+
+* Log in to the Interactive Brokers site.
+* Go to Performance & Reports > Statements.
+* Under "Default Statements", run the "Activity" statement.
+* Set period to "Annual" and format to "CSV".
+
+```
+# Example: process 2 yearly exports from Interactive Brokers.
+$ python main.py --ib U4151384_2022_2022.csv U4151384_2023_2023.csv
+```
+
+
 Saxo Bank
 ---------
 

@@ -5,6 +5,9 @@ class DividendCollection:
     def __init__(self):
         self.payments = []
 
+    def __iter__(self):
+        return iter(self.payments)
+
     def append(self, dividend_payment: DividendPayment):
         self.payments.append(dividend_payment)
 
