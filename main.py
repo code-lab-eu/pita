@@ -3,8 +3,7 @@ import datetime
 import sys
 
 from importers.binck.transactions_importer import BinckTransactionsImporter
-from importers.interactivebrokers.dividends_importer import InteractiveBrokersDividendsImporter
-from importers.interactivebrokers.transactions_importer import InteractiveBrokersImporter
+from importers.interactivebrokers.importer import InteractiveBrokersImporter
 from importers.pita.dividends_importer import PitaDividendsImporter
 from importers.pita.transactions_importer import PitaTransactionsImporter
 from importers.saxo.dividends_importer import SaxoDividendsImporter
@@ -64,14 +63,12 @@ if __name__ == "__main__":
         help="The path to an Excel file containing our own exported dividends.",
     )
     parser.add_argument(
-        "--interactivebr-transactions",
-        dest="transactions_interactivebr",
-        help="The path to an excel file detailing Interactive Broker transactions.",
-    )
-    parser.add_argument(
-        "--interactivebr-dividends",
-        dest="dividends_interactivebr",
-        help="The path to an excel file detailing Interactive Broker transactions.",
+        "--interactivebrokers-activity",
+        "--ib",
+        dest="interactivebrokers_activity",
+        help="The path to a CSV file containing an export of Interactive Brokers activity.",
+        action="append",
+        nargs="*",
     )
     args = parser.parse_args()
 
@@ -81,7 +78,14 @@ if __name__ == "__main__":
         sys.exit(1)
 
     transactions = TransactionCollection()
-    payments = DividendCollection()
+    dividends = DividendCollection()
+
+    if args.interactivebrokers_activity:
+        for csv_files in args.interactivebrokers_activity:
+            for csv_file in csv_files:
+                InteractiveBrokersImporter.import_activity(
+                    transactions, dividends, csv_file
+                )
 
     if args.transactions_trading212:
         # Loop over the CSV files.
@@ -91,7 +95,7 @@ if __name__ == "__main__":
                 Trading212TransactionsImporter.import_transactions(
                     transactions, csv_file
                 )
-                Trading212DividendsImporter.import_dividends(payments, csv_file)
+                Trading212DividendsImporter.import_dividends(dividends, csv_file)
 
     if args.transactions_binck:
         BinckTransactionsImporter.import_transactions(
@@ -102,26 +106,16 @@ if __name__ == "__main__":
         SaxoImporter.import_transactions(transactions, args.saxo_trades)
 
     if args.saxo_dividends:
-        SaxoDividendsImporter.import_dividends(payments, args.saxo_dividends)
+        SaxoDividendsImporter.import_dividends(dividends, args.saxo_dividends)
 
     if args.saxo_closed_positions:
         SaxoImporter.import_closed_positions(transactions, args.saxo_closed_positions)
-
-    if args.transactions_interactivebr:
-        InteractiveBrokersImporter.import_transactions(
-            transactions, args.transactions_interactivebr
-        )
-
-    if args.dividends_interactivebr:
-        InteractiveBrokersDividendsImporter.import_dividends(
-            payments, args.dividends_interactivebr
-        )
 
     if args.pita_investments:
         PitaTransactionsImporter.import_transactions(transactions, args.pita_investments)
 
     if args.pita_dividends:
-        PitaDividendsImporter.import_dividends(payments, args.pita_dividends)
+        PitaDividendsImporter.import_dividends(dividends, args.pita_dividends)
 
     # Export the transactions to an Excel file.
     if not transactions.is_empty():
@@ -273,7 +267,7 @@ if __name__ == "__main__":
             print("Saved file sales.xlsx!")
 
         # Dividend payments
-        if not payments.is_empty():
+        if not dividends.is_empty():
             wb = Workbook()
 
             # grab the active worksheet
@@ -300,9 +294,9 @@ if __name__ == "__main__":
             ws.column_dimensions["E"].width = 20
             ws.column_dimensions["F"].width = 30
 
-            fund_names = payments.get_fund_names()
+            fund_names = dividends.get_fund_names()
             for fund_name in fund_names:
-                fund_payments = payments.get_fund_payments(fund_name)
+                fund_payments = dividends.get_fund_payments(fund_name)
 
                 # Add each transaction as a new row in the Excel sheet.
                 for payment in fund_payments:
