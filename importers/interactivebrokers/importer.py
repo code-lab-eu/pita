@@ -14,6 +14,7 @@ from transaction_collection import TransactionCollection
 
 FUND_DOMICILE_MAPPING = {
     "AGGH": "Ireland",
+    "CSPX": "Ireland",
     "EPRA": "Luxembourg",
     "IEAC": "Ireland",
     "IHYG": "Ireland",
@@ -27,6 +28,7 @@ FUND_DOMICILE_MAPPING = {
 
 FUND_NAME_MAPPING = {
     "AGGH": "iShares Core Global Aggregate Bond UCITS ETF",
+    "CSPX": "iShares Core S&P 500 UCITS ETF",
     "EPRA": "Amundi Index FTSE EPRA Nareit Global ETF",
     "IEAC": "iShares Core Euro Corp Bond ETF",
     "IHYG": "iShares High Yield Corp. Bond UCITS ETF",
@@ -83,6 +85,11 @@ class InteractiveBrokersImporter:
             date_time = datetime.strptime(row[date_time_column], "%Y-%m-%d, %H:%M:%S")
             transaction_type = row[transaction_type_column]
 
+            # Strip leading "IA;" from the transaction type. This indicates that the transaction is executed using an
+            # internal algorithm, and applies both to buys and sells.
+            if transaction_type.startswith("IA;"):
+                transaction_type = transaction_type[3:]
+
             # If the transaction type starts with "C" (Close), it is a sale. If it starts with "O" (Open), it is a buy.
             if transaction_type.startswith("C"):
                 transaction_type = "Sell"
@@ -90,7 +97,7 @@ class InteractiveBrokersImporter:
                 transaction_type = "Buy"
             else:
                 print(
-                    "Error: could not determine transaction type for " + symbol + ".", file=sys.stderr
+                    "Error: could not determine transaction type " + transaction_type + " for " + symbol + ".", file=sys.stderr
                 )
                 exit(1)
 
