@@ -157,6 +157,16 @@ if __name__ == "__main__":
         for fund_name in fund_names:
             fund_transactions = transactions.get_fund_transactions(fund_name)
 
+            # If the position was closed in preceding years, it is no longer relevant for the current tax report.
+            for transaction in fund_transactions:
+                if transaction.transaction_type == "Sell" and transaction.total == 0 and transaction.date_time.year < datetime.date.today().year - 1:
+                    fund_transactions = fund_transactions[:fund_transactions.index(transaction)]
+                    break
+
+            # If the fund has no transactions, skip it.
+            if not fund_transactions:
+                continue
+
             # Add each transaction as a new row in the Excel sheet.
             for transaction in fund_transactions:
                 ws.append(
