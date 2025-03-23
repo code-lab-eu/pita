@@ -90,6 +90,11 @@ class InteractiveBrokersImporter:
             if transaction_type.startswith("IA;"):
                 transaction_type = transaction_type[3:]
 
+            # Strip leading "IM;" from the transaction type. This indicates that the transaction is scheduled for
+            # immediate execution.
+            if transaction_type.startswith("IM;"):
+                transaction_type = transaction_type[3:]
+
             # If the transaction type starts with "C" (Close), it is a sale. If it starts with "O" (Open), it is a buy.
             if transaction_type.startswith("C"):
                 transaction_type = "Sell"
