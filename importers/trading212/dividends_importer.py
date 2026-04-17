@@ -6,12 +6,13 @@ from typeguard import typechecked
 from datetime import datetime
 
 FUND_DOMICILE_MAPPING = {
-    "IWQU": "Ireland",
-    "IUSN": "Ireland",
-    "IQQW": "Ireland",
-    "VAGF": "Ireland",
-    "IS3S": "Ireland",
+    "29GI": "Ireland",
     "IQQH": "Ireland",
+    "IQQW": "Ireland",
+    "IS3S": "Ireland",
+    "IUSN": "Ireland",
+    "IWQU": "Ireland",
+    "VAGF": "Ireland",
 }
 
 
