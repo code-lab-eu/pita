@@ -1,3 +1,4 @@
-argparse~=1.4.0
-openpyxl~=3.0.10
-typeguard~=2.13.3
+argparse==1.4.0
+openpyxl==3.1.5
+pur==7.3.3
+typeguard==4.5.1
