@@ -41,13 +41,9 @@ class Appendix8Row:
                 % (self.domicile, transaction.domicile)
             )
 
-        # For now we can only calculate the price in EUR since the euro and leva are locked. To add different currencies
-        # we need to have the exact exchange rate of the day the stock was purchased.
-        if transaction.currency != "EUR":
-            raise ValueError(
-                "Only EUR transactions are supported for Appendix 8. Got a transaction in %s"
-                % transaction.currency
-            )
-
+        # `purchase_price` is expected to be normalized to EUR by the importer.
+        # For Trading 212 this comes from the "Total (EUR)" / "Total" column.
+        # For brokers/files without EUR totals we need to convert using the exact
+        # FX rate on the purchase date.
         self.number += transaction.number
         self.price_eur += transaction.purchase_price

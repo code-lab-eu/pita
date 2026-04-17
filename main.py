@@ -359,7 +359,7 @@ if __name__ == "__main__":
                 ws["A1"] = "Domicile"
                 ws["B1"] = "Number"
                 ws["C1"] = "Transaction date"
-                ws["D1"] = "Total price origin currency"
+                ws["D1"] = "Total price in EUR"
                 ws["E1"] = "Total price in BGN"
 
                 # Set a blue background color and white font color on row 1 (the header row).
@@ -377,7 +377,7 @@ if __name__ == "__main__":
                 transactions.sort_by_date(False)
 
                 # For the Appendix 8 report we need a list of the number of stocks that have been bought on a particular
-                # day, along with the price in the original currency and in leva.
+                # day, along with the total purchase price in EUR and in leva.
                 appendix8rows = {}
 
                 for transaction in transactions.transactions:
