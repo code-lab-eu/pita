@@ -117,6 +117,8 @@ if __name__ == "__main__":
     if args.pita_dividends:
         PitaDividendsImporter.import_dividends(dividends, args.pita_dividends)
 
+    transactions.aggregate_daily_buys_by_fund()
+
     # Export the transactions to an Excel file.
     if not transactions.is_empty():
         wb = Workbook()
