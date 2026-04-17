@@ -57,6 +57,7 @@ class Trading212DividendsImporter:
 
             # We skip the first line, because it shows column headers
             next(csvreader)
+            unknown_domicile_tickers = set()
             for row in csvreader:
                 # If we don't have the fund this row is a bank transaction. Skip it!
                 security = row[header_rows["security"]]
@@ -76,12 +77,8 @@ class Trading212DividendsImporter:
                 ticker = row[header_rows["ticker"]]
                 country = FUND_DOMICILE_MAPPING.get(ticker)
                 if not country:
-                    print(
-                        "Error could not find domicile "
-                        + ticker
-                        + " add it to FUND_DOMICILE_MAPPING!"
-                    )
-                    exit()
+                    unknown_domicile_tickers.add(ticker or "(empty ticker)")
+                    continue
                 dividend_payment = DividendPayment(
                     security,
                     company,
@@ -92,3 +89,11 @@ class Trading212DividendsImporter:
                     date_time,
                 )
                 collection.append(dividend_payment)
+
+            if unknown_domicile_tickers:
+                print(
+                    "Error: encountered unknown funds when processing Trading 212 dividends. "
+                    "Please add these to FUND_DOMICILE_MAPPING: "
+                    + ", ".join(sorted(unknown_domicile_tickers))
+                )
+                exit()

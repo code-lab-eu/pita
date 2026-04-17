@@ -67,6 +67,7 @@ class Trading212TransactionsImporter:
 
             # We skip the first line, because it contains column headers.
             next(csvreader)
+            unknown_domicile_tickers = set()
             for row in csvreader:
                 # If we don't have the fund this row is a bank transaction. Skip it!
                 fund_name = row[header_rows["fund_name"]]
@@ -92,12 +93,8 @@ class Trading212TransactionsImporter:
                 ticker = row[header_rows["ticker"]]
                 domicile = FUND_DOMICILE_MAPPING.get(ticker)
                 if not domicile:
-                    print(
-                        "Error could not find domicile "
-                        + ticker
-                        + " add it to FUND_DOMICILE_MAPPING!"
-                    )
-                    exit()
+                    unknown_domicile_tickers.add(ticker or "(empty ticker)")
+                    continue
                 transaction = Transaction(
                     fund_name,
                     domicile,
@@ -109,3 +106,11 @@ class Trading212TransactionsImporter:
                     purchase_price,
                 )
                 collection.append(transaction)
+
+            if unknown_domicile_tickers:
+                print(
+                    "Error: encountered unknown funds when processing Trading 212 transactions. "
+                    "Please add these to FUND_DOMICILE_MAPPING: "
+                    + ", ".join(sorted(unknown_domicile_tickers))
+                )
+                exit()
